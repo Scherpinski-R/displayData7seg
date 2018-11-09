@@ -29,6 +29,15 @@ architecture Behavior of displayData7seg is
 	signal o_nibble7seg1: STD_LOGIC_VECTOR(7 downto 0);
 	signal o_nibble7seg2: STD_LOGIC_VECTOR(7 downto 0);
 	signal o_nibble7seg3: STD_LOGIC_VECTOR(7 downto 0);
+	
+	COMPONENT nibbleTo7seg
+	PORT(
+		i_nibble : IN std_logic_vector(3 downto 0);          
+		o_data : OUT std_logic_vector(7 downto 0)
+		);
+	END COMPONENT;
+	
+	
 begin
 
 	-- Divide clk by 2^(NBITS+1)	
@@ -50,7 +59,7 @@ begin
 
 	end process;
 
-	process(currentDisplay) begin
+	process(currentDisplay, o_nibble7seg0, o_nibble7seg1, o_nibble7seg2, o_nibble7seg3) begin
 		case currentDisplay is
 			when d0 => displaySel <= "1110"; o_display <= o_nibble7seg0; nextDisplay <= d1;
 			when d1 => displaySel <= "1101"; o_display <= o_nibble7seg1; nextDisplay <= d2;
@@ -59,8 +68,24 @@ begin
 		end case;
 	end process;
 
+	Inst_nibbleTo7seg0: nibbleTo7seg PORT MAP(
+		i_nibble => i_data0,
+		o_data => o_nibble7seg0
+	);
 
-	-- Add nibble 0..3 to convert i_data to 7seg
+	Inst_nibbleTo7seg1: nibbleTo7seg PORT MAP(
+		i_nibble => i_data1,
+		o_data => o_nibble7seg1
+	);
 
+	Inst_nibbleTo7seg2: nibbleTo7seg PORT MAP(
+		i_nibble => i_data2,
+		o_data => o_nibble7seg2
+	);
+
+	Inst_nibbleTo7seg3: nibbleTo7seg PORT MAP(
+		i_nibble => i_data3,
+		o_data => o_nibble7seg3
+	);
 
 end Behavior;
